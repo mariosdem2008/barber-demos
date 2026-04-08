@@ -29,6 +29,8 @@
       margin:0;
       font-family:Manrope,sans-serif;
       color:var(--text);
+      --mx:50%;
+      --my:40%;
       background:
         radial-gradient(circle at top left,rgba(201,164,102,.14),transparent 28%),
         radial-gradient(circle at 80% 10%,rgba(201,164,102,.08),transparent 24%),
@@ -94,11 +96,38 @@
       line-height:.92;margin:14px 0;
     }
     .title{font-size:clamp(46px,6vw,86px)}
+    .title .line{display:block;overflow:hidden}
+    .title .word{
+      display:inline-block;
+      opacity:0;
+      transform:translateY(112%);
+      transition:transform .72s cubic-bezier(.22,1,.36,1),opacity .72s ease;
+    }
+    .loaded .title .word{opacity:1;transform:translateY(0)}
+    .loaded .title .line:nth-child(2) .word{transition-delay:.12s}
     .section-title{font-size:clamp(34px,4.7vw,60px)}
     .copy{color:var(--muted);font-size:15px;line-height:1.85}
     .gold{color:var(--gold2)}
 
-    .hero{padding:34px 0 86px}
+    .hero{padding:34px 0 86px;position:relative}
+    .hero:before,.hero:after{
+      content:"";
+      position:absolute;
+      pointer-events:none;
+      z-index:0;
+      border-radius:999px;
+      filter:blur(70px);
+    }
+    .hero:before{
+      width:380px;height:380px;top:3%;left:-80px;
+      background:radial-gradient(circle,rgba(201,164,102,.2),transparent 70%);
+      animation:orbFloat 12s ease-in-out infinite;
+    }
+    .hero:after{
+      width:320px;height:320px;bottom:2%;right:-70px;
+      background:radial-gradient(circle,rgba(237,210,161,.16),transparent 72%);
+      animation:orbFloat 14s ease-in-out infinite reverse;
+    }
     .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:stretch}
     .hero-copy{padding-top:44px;position:relative}
     .hero-copy:after{
@@ -118,6 +147,12 @@
         linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
       overflow:hidden;
       box-shadow:var(--shadow);
+      transform-style:preserve-3d;
+    }
+    .stage:before{
+      content:"";
+      position:absolute;inset:-2px;z-index:0;pointer-events:none;
+      background:radial-gradient(500px circle at var(--mx) var(--my),rgba(237,210,161,.11),transparent 45%);
     }
     .main-img,.side-img{position:absolute;overflow:hidden}
     .main-img{top:18px;left:18px;right:110px;height:58%;border-radius:24px}
@@ -162,13 +197,20 @@
       background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
       box-shadow:var(--shadow);
       border-radius:22px;padding:18px;
+      transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;
+      transform-style:preserve-3d;
     }
+    .card:hover{border-color:rgba(237,210,161,.32);box-shadow:0 22px 48px rgba(0,0,0,.35)}
     .card strong{display:block;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
     .card p{margin:10px 0 0;color:var(--muted);font-size:13px;line-height:1.8}
 
     .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
     .g{border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
-    .g img{height:180px;width:100%;object-fit:cover;filter:brightness(.86)}
+    .g img{
+      height:180px;width:100%;object-fit:cover;filter:brightness(.86);
+      transition:transform .45s ease,filter .45s ease;
+    }
+    .g:hover img{transform:scale(1.08);filter:brightness(.95)}
 
     .reviews{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .review{
@@ -176,7 +218,9 @@
       background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
       box-shadow:var(--shadow);
       border-radius:22px;padding:18px;
+      transition:transform .35s ease,border-color .35s ease;
     }
+    .review:hover{transform:translateY(-4px);border-color:rgba(237,210,161,.28)}
     .review p{margin:0;color:var(--muted);font-size:13px;line-height:1.85;font-style:italic}
     .review strong{display:block;margin-top:12px;font-size:13px}
     .review span{display:block;color:rgba(255,255,255,.35);font-size:11px;margin-top:2px}
@@ -205,6 +249,10 @@
 
     .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
     .reveal.visible{opacity:1;transform:translateY(0)}
+    @keyframes orbFloat{
+      0%,100%{transform:translate3d(0,0,0)}
+      50%{transform:translate3d(0,-22px,0)}
+    }
 
     @media (max-width:980px){
       .hero-grid{grid-template-columns:1fr}
@@ -216,6 +264,9 @@
       .side-img{display:none}
       .stage-bottom{grid-template-columns:1fr}
       .links{display:none}
+    }
+    @media (pointer:coarse){
+      .card,.review{transform:none!important}
     }
   </style>
 </head>
@@ -247,7 +298,10 @@
         <div class="hero-grid">
           <div class="hero-copy reveal">
             <div class="eyebrow">Premium Grooming</div>
-            <h1 class="title">Καθαρές γραμμές.<br><span class="gold">Σωστό τελείωμα.</span></h1>
+            <h1 class="title">
+              <span class="line"><span class="word">Καθαρές γραμμές.</span></span>
+              <span class="line"><span class="word gold">Σωστό τελείωμα.</span></span>
+            </h1>
             <p>Στο JD Barber Shop δουλεύουμε με λεπτομέρεια και συνέπεια. Από fade και taper μέχρι διαμόρφωση γενειάδας και παραδοσιακό ξύρισμα, ο στόχος είναι ένας: να βγείτε από το κατάστημα όπως πρέπει.</p>
             <div class="hero-actions">
               <a class="btn primary" href="tel:+35722123456"><i class="fas fa-phone-alt"></i> Καλέστε</a>
@@ -458,6 +512,58 @@
       if (reduce) el.classList.add('visible');
       else reveal.observe(el);
     });
+
+    requestAnimationFrame(() => document.body.classList.add('loaded'));
+
+    if (!reduce) {
+      const stage = document.querySelector('.stage');
+      const layers = stage ? stage.querySelectorAll('[data-depth]') : [];
+      let tx = 0;
+      let ty = 0;
+      let sx = 0;
+      let sy = 0;
+
+      if (stage) {
+        stage.addEventListener('mousemove', (event) => {
+          const rect = stage.getBoundingClientRect();
+          tx = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+          ty = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+          document.body.style.setProperty('--mx', `${((event.clientX - rect.left) / rect.width) * 100}%`);
+          document.body.style.setProperty('--my', `${((event.clientY - rect.top) / rect.height) * 100}%`);
+        });
+        stage.addEventListener('mouseleave', () => {
+          tx = 0;
+          ty = 0;
+          document.body.style.setProperty('--mx', '50%');
+          document.body.style.setProperty('--my', '40%');
+        });
+      }
+
+      const animateDepth = () => {
+        sx += (tx - sx) * 0.08;
+        sy += (ty - sy) * 0.08;
+        layers.forEach((layer) => {
+          const depth = Number(layer.getAttribute('data-depth') || 12);
+          layer.style.transform = `translate3d(${sx * depth}px,${sy * depth * 0.65}px,0)`;
+        });
+        requestAnimationFrame(animateDepth);
+      };
+      animateDepth();
+
+      const tiltTargets = document.querySelectorAll('.card,.review');
+      tiltTargets.forEach((target) => {
+        target.addEventListener('mousemove', (event) => {
+          if (window.matchMedia('(pointer:coarse)').matches) return;
+          const rect = target.getBoundingClientRect();
+          const rx = ((event.clientY - rect.top) / rect.height - 0.5) * -4;
+          const ry = ((event.clientX - rect.left) / rect.width - 0.5) * 5;
+          target.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+        });
+        target.addEventListener('mouseleave', () => {
+          target.style.transform = '';
+        });
+      });
+    }
   </script>
 </body>
 </html>
